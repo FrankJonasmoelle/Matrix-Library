@@ -29,26 +29,40 @@ class Matrix():
 
     def __eq__(self, other_matrix: object) -> bool:
 
-    def is_matrix(self, matrix2) -> bool:
+    def is_matrix(self, matrix2: Matrix) -> bool:
         # checks if self and matrix2 are matrices
 
+    def has_same_dimension(self, matrix2: Matrix) -> bool:
+        # checks if self and matrix2 have same number of rows and columns
+
     def __add__(self, matrix2: Matrix) -> Matrix:
-        # check if second matrix is indeed a matrix
-        if is_matrix(matrix2):
-            # multiply
+        
+        if is_matrix(matrix2) and has_same_dimension(matrix2):
+            num_rows = len(matrix2)
+            num_cols = len(matrix2[0])
+
+            my_matrix = [[self[row_idx][col_idx] + other_matrix[row_idx][col_idx] for col_idx in range(num_cols)] for row_idx in range(num_rows)]
+            return my_matrix
+        else: 
+            raise TypeError("Input needs to be a matrix")
+
 
     def __sub__(self, matrix2: Matrix) -> Matrix:
-        # check if second matrix is indeed a matrix
-        if is_matrix(matrix2):
-            # multiply
+        
+        if is_matrix(matrix2) and has_same_dimension(matrix2):
+            num_rows = len(matrix2)
+            num_cols = len(matrix2[0])
+
+            my_matrix = [[self[row_idx][col_idx] - other_matrix[row_idx][col_idx] for col_idx in range(num_cols)] for row_idx in range(num_rows)]
+            return my_matrix
+        else: 
+            raise TypeError("Input needs to be a matrix")
+          
 
     def __mul__(self, other: Union[Matrix, int]) -> Matrix:
-        # check if second matrix is indeed a matrix
-        if is_matrix(matrix2):
-            if isinstance(matrix2, int):
-                # multiply by constant 
-            if isinstance(matrix2, Matrix):
-                # multiply by matrix 
+        # multiply by constant 
+         
+        # multiply by matrix 
 
     
     def create_identity(self, size: int) -> Matrix:
@@ -62,7 +76,7 @@ class Matrix():
             ValueError: size of identity matrix has to be larger than 1
 
         Returns:
-            Matrix: [description]
+            Matrix: Identity matrix of specified size
         """
   
         if size is None:
