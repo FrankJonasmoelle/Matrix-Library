@@ -29,11 +29,47 @@ class Matrix():
 
     def __eq__(self, other_matrix: object) -> bool:
 
-    def is_matrix(self, matrix2: Matrix) -> bool:
-        # checks if self and matrix2 are matrices
+    def is_matrix(self, lis: list) -> bool:
+        """Checks whether an input list is a matrix, or not. 
+
+        Args:
+            lis (list): lis gets checked whether it is a matrix or not
+
+        Returns:
+            bool: True if lis is a matrix, False if not
+        """
+        # 1) Dimension has to be 2
+        # 2) Length of every inner list (len(mat[0...i])) is the same
+        # 3) Each element has to be an int 
+        is_a_matrix = True
+
+        # 1) check if list is 2d
+        if not isinstance(lis[0], list) and not isinstance(lis[0][0], int):
+            is_a_matrix = False
+
+        # 2) check if length of inner lists is equal (the column size is equal for all rows)
+        length_inner_list = len(lis[0])
+
+        for i in range(len(lis)):
+            if len(lis[i]) != length_inner_list:
+                is_a_matrix = False
+
+        # 3) Each element has to be an int 
+        for i in range(len(lis)):
+            for j in range(len(lis[i])):
+                if not isinstance(lis[i][j], int):
+                    is_a_matrix = False
+
+        return is_a_matrix
+
 
     def has_same_dimension(self, matrix2: Matrix) -> bool:
         # checks if self and matrix2 have same number of rows and columns
+        if len(self[0]) == len(matrix2[0]) and len(self) == len(matrix2):
+            return True
+        else: 
+            return False
+        
 
     def __add__(self, matrix2: Matrix) -> Matrix:
         
