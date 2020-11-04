@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Union
 
 
-class Matrix(MD_Operators):
+class Matrix():
 
 
     def __init__(self, lis: list): 
@@ -50,13 +50,33 @@ class Matrix(MD_Operators):
             if isinstance(matrix2, Matrix):
                 # multiply by matrix 
 
-    #def __truediv__(self, matrix2: int) -> Matrix:
-        # check if second matrix is indeed a matrix
-    #    return -1
     
-    def create_identity(self) -> Matrix:
-     
+    def create_identity(self, size: int) -> Matrix:
+        """Creates the identity matrix of a specific size
+
+        Args:
+            size (int): Specifies the size of the identity matrix, corresponding to the row and column size.
+
+        Raises:
+            ValueError: size parameter has to be specified
+            ValueError: size of identity matrix has to be larger than 1
+
+        Returns:
+            Matrix: [description]
+        """
+  
+        if size is None:
+            raise ValueError("Please specify the size!")
+
+        if size < 2:
+            raise ValueError("Size parameter needs to be at least larger than 2")
+        
+        id_matrix = [[1 if col_idx == row_idx else 0 for col_idx in range(size)] for row_idx in range(size)]
+        return id_matrix
+        
+
     def transpose(self) -> Matrix:
+
 
     def inverse(self) -> Matrix:
 
