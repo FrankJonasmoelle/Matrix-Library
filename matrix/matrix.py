@@ -1,8 +1,11 @@
 """own implementation of a matrix class that allows the creation of matrices and matrix operations.
 """
 from __future__ import annotations
+from operator import is_
 
 from typing import Union
+
+from numpy.lib.arraysetops import isin
 
 
 class Matrix():
@@ -17,15 +20,21 @@ class Matrix():
         Raises:
             TypeError: Input has to be a list
         """
-        if isinstance(lis, list):
+        if self.is_matrix(lis):
             self.matrix = lis
             self.num_rows = len(lis)
             self.num_cols = len(lis[0])
         else:
-            raise TypeError("Input has to be a list")
+            raise TypeError("Input has to be a valid matrix")
+
+    def __repr__(self):
+        return "The matrix consists of {} rows and {} colums".format(self.num_rows, self.num_cols)
+
 
     def __str__(self) -> str:
-        return "The matrix consists of {} rows and {} colums".format(self.num_rows, self.num_cols)
+        for row in self:
+            print(row)
+
 
     def __eq__(self, other_matrix: object) -> bool:
 
@@ -73,7 +82,7 @@ class Matrix():
 
     def __add__(self, matrix2: Matrix) -> Matrix:
         
-        if is_matrix(matrix2) and has_same_dimension(matrix2):
+        if self.is_matrix(matrix2) and has_same_dimension(matrix2):
             num_rows = len(matrix2)
             num_cols = len(matrix2[0])
 
@@ -85,20 +94,82 @@ class Matrix():
 
     def __sub__(self, matrix2: Matrix) -> Matrix:
         
-        if is_matrix(matrix2) and has_same_dimension(matrix2):
+        if self.is_matrix(matrix2) and has_same_dimension(matrix2):
             num_rows = len(matrix2)
             num_cols = len(matrix2[0])
 
-            my_matrix = [[self[row_idx][col_idx] - other_matrix[row_idx][col_idx] for col_idx in range(num_cols)] for row_idx in range(num_rows)]
+            my_matrix = [[self[row_idx][col_idx] - other_matrix[row_idx][col_idx] for col_idx in range(num_cols)] 
+                            for row_idx in range(num_rows)]
             return my_matrix
         else: 
             raise TypeError("Input needs to be a matrix")
           
 
     def __mul__(self, other: Union[Matrix, int]) -> Matrix:
-        # multiply by constant 
+        """[summary]
+
+        Args:
+            other (Union[Matrix, int]): [description]
+
+        Raises:
+            ValueError: [description]
+            TypeError: [description]
+
+        Returns:
+            Matrix: [description]
+        """
          
-        # multiply by matrix 
+        if isinstance(other, int):
+            # perform scalar multiplication
+            num_rows = len(self)
+            num_cols = len(self[0])
+
+            new_matrix = [[self[row_idx][col_idx] * other for col_idx in range(num_cols)] for row_idx in range(num_rows)]
+            return new_matrix
+
+
+        if self.is_matrix(other):
+            ## perform matrix multiplication
+            n_self = len(self[0])
+            n_other = len(other)
+        
+            if n_self != n_other:
+                raise ValueError("Cannot multiply matrices of this shape")
+
+            output_matrix = self.create_matrix_of_shape(num_rows=len(self), num_cols=len(other[0])) 
+            
+            for i in range(len(self)):
+                for j in range(len(other[0])):
+                    for k in range(len(other)):
+                        output_matrix[i][j] += self[i][k] * other[k][j]
+            return output_matrix
+
+        else:
+            raise TypeError("Input needs to either be a matrix, or a scalar")
+         
+    def create_matrix_of_shape(self, num_rows: int, num_cols: int) -> Matrix:
+        """Creates a matrix of 0's with a specified number of rows and columns
+
+        Args:
+            num_rows (int): Number of rows
+            num_cols (int): Number of columns
+
+        Raises:
+            ValueError: Both parameters have to be specified
+            ValueError: Both parameters need to be larger than 0
+
+        Returns:
+            Matrix: Matrix of 0's of specified size
+        """
+        if num_rows is None or num_cols is None:
+            raise ValueError("Needs num_rows and num_cols as input")
+
+        if num_rows < 1 or num_cols < 1:
+            raise ValueError("num_rows and num_cols has to be larger than 0")
+
+        new_matrix = [[0 for col_idx in range(num_cols)] for row_idx in range(num_rows)]
+        return new_matrix
+
 
     
     def create_identity(self, size: int) -> Matrix:
@@ -131,3 +202,8 @@ class Matrix():
     def inverse(self) -> Matrix:
 
     
+    def determinant(self) -> int:
+
+
+    def is_symmetric(self)-> bool:
+
