@@ -1,11 +1,8 @@
 """own implementation of a matrix class that allows the creation of matrices and matrix operations.
 """
 from __future__ import annotations
-from operator import is_
 
 from typing import Union
-
-from numpy.lib.arraysetops import isin
 
 
 class Matrix():
@@ -27,16 +24,104 @@ class Matrix():
         else:
             raise TypeError("Input has to be a valid matrix")
 
+    def __len__(self):
+        return len(self.matrix)
+
     def __repr__(self):
         return "The matrix consists of {} rows and {} colums".format(self.num_rows, self.num_cols)
 
 
     def __str__(self) -> str:
-        for row in self:
+        for row in self.matrix:
             print(row)
 
 
-    def __eq__(self, other_matrix: object) -> bool:
+    def __eq__(self, other_matrix: Matrix) -> bool:
+        """Checks whether two matrices are identical or not
+
+        Args:
+            other_matrix (Matrix): Comparison matrix
+
+        Returns:
+            bool: True if given matrix is identical, false if not
+        """
+        is_equal = True
+        for i in range(len(self)):
+            for j in range(len(self[0])):
+                if self[i][j] != other_matrix[i][j]:
+                    is_equal = False
+        return is_equal
+
+    def __getitem__(self):
+
+
+    def __setitem__(self):
+        
+
+
+    def __add__(self, other_matrix: Matrix) -> Matrix:
+        
+        if self.is_matrix(other_matrix) and self.has_same_dimension(other_matrix):
+            num_rows = len(other_matrix)
+            num_cols = len(other_matrix[0])
+
+            my_matrix = [[self[row_idx][col_idx] + other_matrix[row_idx][col_idx] for col_idx in range(num_cols)] for row_idx in range(num_rows)]
+            return my_matrix
+        else: 
+            raise TypeError("Input needs to be a matrix")
+
+
+    def __sub__(self, other_matrix: Matrix) -> Matrix:
+        
+        if self.is_matrix(other_matrix) and self.has_same_dimension(other_matrix):
+            num_rows = len(other_matrix)
+            num_cols = len(other_matrix[0])
+
+            my_matrix = [[self[row_idx][col_idx] - other_matrix[row_idx][col_idx] for col_idx in range(num_cols)] 
+                            for row_idx in range(num_rows)]
+            return my_matrix
+        else: 
+            raise TypeError("Input needs to be a matrix")
+          
+
+    def __mul__(self, other: Union[Matrix, int]) -> Matrix:
+        """Implements matrix multiplications
+
+        Args:
+            other (Union[Matrix, int]): Either a matrix or an integer input
+
+        Raises:
+            ValueError: "Shape" of matrices has to fit in order to multiply them
+            TypeError: Input has to be a matrix or a scalar
+
+        Returns:
+            Matrix: Output matrix after multiplication
+        """
+        if isinstance(other, int):
+            # perform scalar multiplication
+            num_rows = len(self)
+            num_cols = len(self[0])
+
+            new_matrix = [[self[row_idx][col_idx] * other for col_idx in range(num_cols)] for row_idx in range(num_rows)]
+            return new_matrix
+
+        if self.is_matrix(other):
+            # perform matrix multiplication
+            n_self = len(self[0])
+            n_other = len(other)
+        
+            if n_self != n_other:
+                raise ValueError("Cannot multiply matrices of this shape")
+
+            output_matrix = self.create_matrix_of_shape(num_rows=len(self), num_cols=len(other[0])) 
+            
+            for i in range(len(self)):
+                for j in range(len(other[0])):
+                    for k in range(len(other)):
+                        output_matrix[i][j] += self[i][k] * other[k][j]
+            return output_matrix
+        else:
+            raise TypeError("Input needs to either be a matrix, or a scalar")
 
     def is_matrix(self, lis: list) -> bool:
         """Checks whether an input list is a matrix, or not. 
@@ -78,74 +163,6 @@ class Matrix():
             return True
         else: 
             return False
-        
-
-    def __add__(self, matrix2: Matrix) -> Matrix:
-        
-        if self.is_matrix(matrix2) and has_same_dimension(matrix2):
-            num_rows = len(matrix2)
-            num_cols = len(matrix2[0])
-
-            my_matrix = [[self[row_idx][col_idx] + other_matrix[row_idx][col_idx] for col_idx in range(num_cols)] for row_idx in range(num_rows)]
-            return my_matrix
-        else: 
-            raise TypeError("Input needs to be a matrix")
-
-
-    def __sub__(self, matrix2: Matrix) -> Matrix:
-        
-        if self.is_matrix(matrix2) and has_same_dimension(matrix2):
-            num_rows = len(matrix2)
-            num_cols = len(matrix2[0])
-
-            my_matrix = [[self[row_idx][col_idx] - other_matrix[row_idx][col_idx] for col_idx in range(num_cols)] 
-                            for row_idx in range(num_rows)]
-            return my_matrix
-        else: 
-            raise TypeError("Input needs to be a matrix")
-          
-
-    def __mul__(self, other: Union[Matrix, int]) -> Matrix:
-        """[summary]
-
-        Args:
-            other (Union[Matrix, int]): [description]
-
-        Raises:
-            ValueError: [description]
-            TypeError: [description]
-
-        Returns:
-            Matrix: [description]
-        """
-         
-        if isinstance(other, int):
-            # perform scalar multiplication
-            num_rows = len(self)
-            num_cols = len(self[0])
-
-            new_matrix = [[self[row_idx][col_idx] * other for col_idx in range(num_cols)] for row_idx in range(num_rows)]
-            return new_matrix
-
-
-        if self.is_matrix(other):
-            ## perform matrix multiplication
-            n_self = len(self[0])
-            n_other = len(other)
-        
-            if n_self != n_other:
-                raise ValueError("Cannot multiply matrices of this shape")
-
-            output_matrix = self.create_matrix_of_shape(num_rows=len(self), num_cols=len(other[0])) 
-            
-            for i in range(len(self)):
-                for j in range(len(other[0])):
-                    for k in range(len(other)):
-                        output_matrix[i][j] += self[i][k] * other[k][j]
-            return output_matrix
-
-        else:
-            raise TypeError("Input needs to either be a matrix, or a scalar")
          
     def create_matrix_of_shape(self, num_rows: int, num_cols: int) -> Matrix:
         """Creates a matrix of 0's with a specified number of rows and columns
@@ -171,7 +188,6 @@ class Matrix():
         return new_matrix
 
 
-    
     def create_identity(self, size: int) -> Matrix:
         """Creates the identity matrix of a specific size
 
@@ -197,13 +213,32 @@ class Matrix():
         
 
     def transpose(self) -> Matrix:
+        """Returns transpose of the matrix
 
+        Returns:
+            Matrix: Transposed matrix
+        """
+        n_rows = len(self)
+        n_cols = len(self[0])
+        # define matrix with swapped shape
+        transposed_matrix = self.create_matrix_of_shape(num_rows=n_cols, num_cols=n_rows)
 
-    def inverse(self) -> Matrix:
+        for i in range(len(transposed_matrix)):
+            for j in range(len(transposed_matrix[0])):
+                transposed_matrix[i][j] = self[j][i]
+        return transposed_matrix
+
+    #def inverse(self) -> Matrix:
 
     
-    def determinant(self) -> int:
+    #def determinant(self) -> int:
 
 
-    def is_symmetric(self)-> bool:
+    def is_symmetric(self) -> bool:
+        is_symm = True
+        for row in range(len(self)):
+            for col in range(len(self[0])):
+                if self[row][col] != self[col][row]:
+                    is_symm = False
+        return is_symm    
 
