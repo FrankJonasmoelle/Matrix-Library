@@ -65,7 +65,7 @@ class Matrix():
 
 
     def __add__(self, other_matrix: Matrix) -> Matrix:
-     """Adds two matrices 
+        """Adds two matrices 
 
         Args:
             other_matrix (Matrix): Other matrix
