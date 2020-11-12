@@ -36,12 +36,16 @@ Basic matrix operations
 # add
 out1 = m1 + m2
 print(out1)
+
 # subtract
 out2 = m1 - m2
 print(out2)
-# multiply
+
+# multiply by scalar
 out3 = m1 * 3
 print(out3)
+
+# matrix multiplication
 out4 = m1 * m3
 print(out4)
 ```
@@ -50,11 +54,14 @@ Further useful operations
 # empty matrix with 4 rows, 3 columns
 empty_matrix = Matrix.create_matrix_of_shape(4,3)
 print(empty_matrix)
+
 # identiy matrix of size 3
 identity = Matrix.create_identity(3)
 print(identity)
+
 # check for symmetry
 m1.is_symmetric()
+
 # transpose
 transpose = m1.transpose()
 print(transpose)
